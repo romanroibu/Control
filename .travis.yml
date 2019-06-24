@@ -1,0 +1,30 @@
+env:
+  global:
+    - SWIFT_BRANCH=swift-5.1-branch
+    - SWIFT_VERSION=swift-5.1-DEVELOPMENT-SNAPSHOT-2019-06-21-a
+matrix:
+  include:
+    - os: linux
+      language: generic
+      dist: trusty
+      sudo: required
+      install:
+        - sudo apt-get install clang libicu-dev
+        - mkdir swift
+        - curl https://swift.org/builds/$SWIFT_BRANCH/ubuntu1404/$SWIFT_VERSION/$SWIFT_VERSION-ubuntu14.04.tar.gz -s | tar xz -C swift &> /dev/null
+        - export PATH="$(pwd)/swift/$SWIFT_VERSION-ubuntu14.04/usr/bin:$PATH"
+      script:
+        - swift package update
+        - swift test
+    - os: osx
+      osx_image: xcode11
+      language: swift
+      sudo: required
+      install:
+        - sudo gem install xcpretty-travis-formatter
+      script:
+        - swift package update
+        - swift test
+
+notifications:
+  email: false
